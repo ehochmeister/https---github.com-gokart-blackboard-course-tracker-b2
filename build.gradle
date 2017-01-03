@@ -1,0 +1,60 @@
+apply plugin: 'java'
+apply plugin: 'war'
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+if (isBuildingBlock()) {
+    version = getB2Version()
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://bbprepo.blackboard.com/content/repositories/releases/"
+    }
+}
+
+configurations {
+    b2deploy
+}
+
+dependencies {
+    b2deploy 'org.oscelot:b2deploy-task:0.1.0'
+
+    compile 'org.slf4j:slf4j-api:1.7.5'
+    compile 'org.slf4j:jul-to-slf4j:1.7.5'
+    compile 'org.slf4j:log4j-over-slf4j:1.7.21'
+    compile 'ch.qos.logback:logback-classic:1.1.3'
+
+    compile files('lib/b2-logging-utils-1.0.0.jar')
+
+    compile 'org.glassfish.jersey.containers:jersey-container-servlet:2.16'
+    compile 'com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.5.1'
+
+    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+    providedCompile 'blackboard.platform:bb-platform:9.1.201404.160205'
+
+    testCompile "junit:junit:4.11"
+}
+ant.taskdef(name: 'b2deploy', classname: 'org.oscelot.ant.B2DeployTask', classpath: configurations.b2deploy.asPath)
+
+task deployb2(dependsOn: 'war') << {
+    println "Deploying \"" + war.archivePath + "\""
+    ant.b2deploy(localfilepath: war.archivePath,
+    host: 'localhost:9876',
+    clean: 'true',
+    courseorgavailable: 'true')
+}
+
+
+String getB2Version() {
+    File mfFile = new File(file(webAppDir), 'WEB-INF' + File.separator + 'bb-manifest.xml');
+    def manifest = new XmlSlurper().parse(mfFile);
+    return manifest.plugin.version['@value'];
+}
+
+boolean isBuildingBlock() {
+    File mfFile = new File(file(webAppDir), 'WEB-INF' + File.separator + 'bb-manifest.xml');
+    return mfFile.exists();
+}

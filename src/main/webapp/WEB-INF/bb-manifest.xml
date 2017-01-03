@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Author: GoKart Labs
+    Copyright: GoKart Labs, 2016
+-->
+<manifest>
+    <plugin>
+        <name value="plugin.name"/>
+        <handle value="coursetracker"/>
+        <description value="plugin.description"/>
+        <default-locale value="en_US"/>
+        <version value="0.0.5"/>
+        <requires>
+            <bbversion value="9.1"/>
+        </requires>
+        <vendor>
+            <id value="gkl"/>
+            <name value="GoKart Labs"/>
+            <url value="https://gokartlabs.com"/>
+            <description value="Minneapolis, MN, USA"/>
+        </vendor>
+
+        <permissions>
+            <permission type="java.io.FilePermission" name="BB_HOME/logs/plugins/-"
+                        actions="write" />
+            <permission type="java.util.logging.LoggingPermission"
+                        name="control"/>
+            <permission type="java.lang.reflect.ReflectPermission"
+                        name="suppressAccessChecks" />
+            <permission type="blackboard.data.AttributePermission"
+                        name="user.authinfo" actions="get"/>
+            <permission type="blackboard.data.AttributePermission"
+                        name="user.personalinfo" actions="get"/>
+        </permissions>
+    </plugin>
+</manifest>
